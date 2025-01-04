@@ -1,0 +1,64 @@
+@startuml
+' Define classes and their relationships
+package "main" {
+    class main {
+        + func main()
+    }
+
+    class model {
+        - viewport : viewport.Model
+        - messages : []string
+        - textarea : textarea.Model
+        - senderStyle : lipgloss.Style
+        - err : error
+        + func Init() tea.Cmd
+        + func Update(msg tea.Msg) (tea.Model, tea.Cmd)
+        + func View() string
+    }
+
+    class textarea.Model {
+        + func New() textarea.Model
+        + func Focus()
+        + func SetWidth(width int)
+        + func SetHeight(height int)
+        + func Update(msg tea.Msg) (textarea.Model, tea.Cmd)
+        + func View() string
+        + func Reset()
+    }
+
+    class viewport.Model {
+        + func New(width, height int) viewport.Model
+        + func SetContent(content string)
+        + func Update(msg tea.Msg) (viewport.Model, tea.Cmd)
+        + func GotoBottom()
+    }
+
+    class lipgloss.Style {
+        + func NewStyle() lipgloss.Style
+        + func Foreground(color string) lipgloss.Style
+        + func Width(width int) lipgloss.Style
+    }
+
+    class tea.Program {
+        + func NewProgram(model tea.Model) *tea.Program
+        + func Run() (tea.Model, error)
+    }
+
+    class errMsg {
+        <<typedef>>
+        - error
+    }
+}
+
+' Relationships
+main --> tea.Program : uses
+main --> model : uses
+model --> viewport.Model : contains
+model --> textarea.Model : contains
+model --> lipgloss.Style : contains
+model --> errMsg : contains
+textarea.Model --> lipgloss.Style : uses
+viewport.Model --> lipgloss.Style : uses
+
+@enduml
+
